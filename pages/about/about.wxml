@@ -1,0 +1,7 @@
+<!--pages/about/about.wxml-->
+<view class="about">
+<view class="about-p">古诗文Lite小程序</view>
+<view class="about-p">夫以铜为镜，可以正衣冠；以史为镜，可以知兴替；以人为镜，可以明得失。</view>
+<view class='about-p'>因为喜爱古诗文，所以遴选经典古文，制作这个小程序。方便随时听之、朗诵之。</view>
+<view ><button class="contact" open-type="contact">联系我们</button></view>
+</view>

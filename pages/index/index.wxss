@@ -1,0 +1,45 @@
+/**index.wxss**/
+.title{
+  margin-top: 100px;
+  margin-bottom: 20px;
+  font-size:28px;
+  text-align: center;
+}
+.author{
+  font-size:16px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.article{
+  margin:0% 0% 5% 0%;
+  padding:0% 3% 0% 3%;
+  height:100%;
+  float: left;
+  width: 94%;
+  font-size:18px;
+  line-height:180%;
+}
+
+.share_next{
+  float: left;
+  width: 90%;
+  margin:0% 0% 4% 0%;
+}
+
+.operation{
+  margin-top:2vh;
+  height:100%;
+  float: left;
+  width: 92vw;
+}
+.operation-button{
+  width: 90vw !important;  
+  margin:0% 0% 4% 0%;
+}
+
+.about{
+  font-size:12px;
+  margin:0% 0% 40% 0%;
+  border-bottom:1px solid  #cccccc;
+}

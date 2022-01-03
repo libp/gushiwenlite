@@ -1,0 +1,19 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="title">
+    {{title}}
+  </view>
+  <view class="author">
+    {{author}}·{{dynasty}}
+  </view>
+  <view class="article">
+    <rich-text nodes="{{article}}"></rich-text>
+  </view>
+  <view class="operation">
+    <button open-type="share" size="default" type="primary" class="operation-button"> 分享 </button>
+    <button bindtap="nextRandom" size="default" type="default" class="operation-button"> 下一篇 </button>
+  </view>
+  <view class="about">
+    <navigator url='/pages/about/about'>关于古诗文Lite</navigator>
+  </view>
+</view>
