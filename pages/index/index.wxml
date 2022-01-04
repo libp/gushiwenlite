@@ -9,8 +9,16 @@
   <view class="article">
     <rich-text nodes="{{article}}"></rich-text>
   </view>
+
+  <view class="isplay" hidden="{{!ishow}}" bindtap="play">
+      <image  class="play_img" mode='scaleToFill' src='/pages/images/pause.png'></image>
+      {{playtext}} 
+      <!-- {{ishow?'operation-button2':''}}" -->
+  </view>
+
+
   <view class="operation">
-    <button open-type="share" size="default" type="primary" class="operation-button"> 分享 </button>
+    <button open-type="share" size="default" type="primary" class="operation-button" > 分享 </button>
     <button bindtap="nextRandom" size="default" type="default" class="operation-button"> 下一篇 </button>
   </view>
   <view class="about">

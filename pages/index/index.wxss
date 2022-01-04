@@ -37,6 +37,23 @@
   width: 90vw !important;  
   margin:0% 0% 4% 0%;
 }
+.operation-button2{
+  width: 30vw !important;  
+  margin:0% 0% 4% 0%;
+}
+
+.play_img{
+  width: 2rem;
+  height: 2rem;
+  border-radius: 1vw;
+}
+
+.isplay{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center; 
+}
 
 .about{
   font-size:12px;

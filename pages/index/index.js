@@ -7,6 +7,8 @@ Page({
     dynasty: '',
     author: '',
     ishow: true,
+    isplay: false,
+    playtext: '暂停',
     id: '',
     audiourl: ''
   },
@@ -80,10 +82,12 @@ Page({
     if (this.data.audiourl == null || this.data.audiourl === '') {
       this.setData({
         ishow: false,
+        isplay: false,
       });
     } else {
       this.setData({
         ishow: true,
+        isplay: true,
         audiourl:  'https://www.nichuiniu.cn/mp3/' + res.data.audiourl
       });
       this.audioCtx.src = this.data.audiourl;
@@ -156,6 +160,23 @@ Page({
         });
       }
     })
+  },
+  play: function (res) {
+    if(this.data.isplay){
+      this.audioCtx.pause();
+      this.setData({
+        isplay: false,
+        playtext: "暂停",
+      });
+    }else{
+      this.audioCtx.play();
+      this.setData({
+        isplay: true,
+        playtext: "播放",
+      });
+    }
+    
+   
   },
   onUnload: function () {
     this.audioCtx.destroy();
