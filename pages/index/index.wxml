@@ -10,9 +10,20 @@
     <rich-text nodes="{{article}}"></rich-text>
   </view>
 
-  <view class="isplay" hidden="{{!ishow}}" bindtap="play">
-      <image  class="play_img" mode='scaleToFill' src='/pages/images/pause.png'></image>
-      {{playtext}} 
+  <view class="isplay" hidden="{{!ishow}}">
+    <view class='progressWrap'>
+      <slider bindchange="slider1change" left-icon="cancel" right-icon="success_no_circle"/>
+    </view>
+      
+    <view class='time'>
+      <text>00:01</text>
+      <text>03:01</text>
+    </view>
+
+    <view class='play_img' bindtap="play">
+      <image  class="play_button_img" mode='scaleToFill'  src="{{ isplay ? '/pages/images/pause.png' : '/pages/images/play.png'}}"></image>
+    </view>
+
       <!-- {{ishow?'operation-button2':''}}" -->
   </view>
 
