@@ -10,7 +10,12 @@ Page({
     isplay: false,
     playtext: '暂停',
     id: '',
-    audiourl: ''
+    audiourl: '',
+    is_moving_slider: false,
+    current_process:"",
+    slider_value: "",
+    total_process: "",
+    slider_max: "",
   },
   onLoad: function (res) {
     var that = this; 
@@ -70,6 +75,7 @@ Page({
     console.log(this.data)
   },
   setCont: function(res) {
+    var that = this;
     this.setData({
       title: res.data.title,
       author: res.data.author,
@@ -90,10 +96,38 @@ Page({
         isplay: true,
         audiourl:  'https://www.nichuiniu.cn/mp3/' + res.data.audiourl
       });
-      this.audioCtx.src = this.data.audiourl;
-      this.audioCtx.play()
     }
+
+    this.audioCtx.src = this.data.audiourl;
+    this.audioCtx.onTimeUpdate(() => {
+      if (!this.data.is_moving_slider) {
+        this.setData({
+          slider_value: Math.floor(that.audioCtx.currentTime),
+          current_process: that.format(that.audioCtx.currentTime),
+        });
+      }
+    })
+    this.audioCtx.onCanplay(this.updateTime)
+    this.audioCtx.play()
   },
+
+  updateTime: function() {
+    let that = this;
+    setTimeout(function(){
+      let duration = that.audioCtx.duration;
+      if (duration == 0 || isNaN(duration)) {
+        console.log(duration)
+        that.updateTime();
+      } else {
+        that.setData({
+          slider_max: Math.floor(that.audioCtx.duration),
+          total_process: that.format(that.audioCtx.duration)
+        });
+      }
+    },100);
+  },
+
+
 
   showModal: function () {
     wx.showModal({
@@ -170,13 +204,47 @@ Page({
       });
     }else{
       this.audioCtx.play();
+      
+      this.audioCtx.onPlay(()=>{
+        console.log(this.audioCtx.duration)//0
+      })
+
       this.setData({
         isplay: true,
         playtext: "播放",
       });
     }
+  },
+
+  // 拖动进度条，到指定位置
+  hanle_slider_change(e) {
+    const position = e.detail.value
+    this.audioCtx.seek(position)
+  },
+  // 拖动进度条控件
+  seekCurrentAudio(position) {
+    // 更新进度条
+    let that = this
+    console.log(that.audioCtx.currentTime)
     
-   
+
+  },
+   // 进度条滑动
+   handle_slider_move_start() {
+    this.setData({
+      is_moving_slider: true
+    });
+  },
+  handle_slider_move_end() {
+    this.setData({
+      is_moving_slider: false
+    });
+  },
+  // 时间格式化
+  format: function(t) {
+    let time = Math.floor(t / 60) >= 10 ? Math.floor(t / 60) : '0' + Math.floor(t / 60)
+    t = time + ':' + ((t % 60) / 100).toFixed(2).slice(-2)
+    return t
   },
   onUnload: function () {
     this.audioCtx.destroy();

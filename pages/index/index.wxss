@@ -16,7 +16,7 @@
   padding:0% 3% 0% 3%;
   height:100%;
   float: left;
-  width: 94%;
+  width: 92vw;
   font-size:18px;
   line-height:180%;
 }
@@ -43,20 +43,23 @@
   padding:0% 3% 0% 3%;
   height:100%;
   float: left;
-  width: 94%;
+  width: 92vw;
 }
 
 .time{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  height:1rem;
+  margin-top: 0.9rem;
+  font-size: 1rem;
 }
 
 .play_img{
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin-top: -1.8rem;
+  margin-top: -1.6rem;
 }
 .play_button_img{
   width: 3rem;
