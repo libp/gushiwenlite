@@ -12,6 +12,28 @@
     "navigationBarTextStyle": "black",
     "enablePullDownRefresh": true
   },
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "/images/tab/tabbar_icon_index_default.png",
+        "selectedIconPath": "/images/tab/tabbar_icon_index_active.png"
+      },
+      {
+        "pagePath": "pages/list/list",
+        "text": "目录",
+        "iconPath": "/images/tab/tabbar_icon_shortcut_default.png",
+        "selectedIconPath": "/images/tab/tabbar_icon_shortcut_active.png"
+      },
+      {
+        "pagePath": "pages/about/about",
+        "text": "关于",
+        "iconPath": "/images/tab/tabbar_icon_message_default.png",
+        "selectedIconPath": "/images/tab/tabbar_icon_message_active.png"
+      }
+    ]
+  },
   "style": "v2",
   "sitemapLocation": "sitemap.json"
 }

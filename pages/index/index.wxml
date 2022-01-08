@@ -27,18 +27,15 @@
     </view>
 
     <view class='play_img' bindtap="play">
-      <image  class="play_button_img" mode='scaleToFill'  src="{{ isplay ? '/pages/images/pause.png' : '/pages/images/play.png'}}"></image>
+      <image  class="play_button_img" mode='scaleToFill'  src="{{ isplay ? '/images/pause.png' : '/images/play.png'}}"></image>
     </view>
-
-      <!-- {{ishow?'operation-button2':''}}" -->
   </view>
-
 
   <view class="operation">
     <button open-type="share" size="default" type="primary" class="operation-button" > 分享 </button>
     <button bindtap="nextRandom" size="default" type="default" class="operation-button"> 下一篇 </button>
   </view>
   <view class="about">
-    <navigator url='/pages/about/about'>关于古诗文Lite</navigator>
+    <!-- <navigator url='/pages/about/about'>关于古诗文Lite</navigator> -->
   </view>
 </view>

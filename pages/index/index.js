@@ -1,5 +1,5 @@
 const app = getApp()
-
+const audioCtx = wx.createInnerAudioContext();
 Page({
   data: {
     article: '',
@@ -8,7 +8,6 @@ Page({
     author: '',
     ishow: true,
     isplay: false,
-    playtext: '暂停',
     id: '',
     audiourl: '',
     is_moving_slider: false,
@@ -19,11 +18,14 @@ Page({
   },
   onLoad: function (res) {
     var that = this; 
-    this.audioCtx = wx.createInnerAudioContext();
     var value = wx.getStorageSync('not_prompt_load');
     if (!value) {
       that.showModal();
     };
+    // var articleID = wx.getStorageSync('articleID');
+    // if (articleID) {
+    //   that.getContentByID(articleID, that);
+    // };
     if(res.id){
       that.getContentByID(res.id, that);
     }else{
@@ -84,8 +86,10 @@ Page({
       id: res.data.id,
       audiourl: res.data.audiourl
     });
-    this.audioCtx.pause()
     if (this.data.audiourl == null || this.data.audiourl === '') {
+      if(!this.data.ishow){
+        audioCtx.pause();
+      }
       this.setData({
         ishow: false,
         isplay: false,
@@ -96,32 +100,42 @@ Page({
         isplay: true,
         audiourl:  'https://www.nichuiniu.cn/mp3/' + res.data.audiourl
       });
-    }
-
-    this.audioCtx.src = this.data.audiourl;
-    this.audioCtx.onTimeUpdate(() => {
-      if (!this.data.is_moving_slider) {
-        this.setData({
-          slider_value: Math.floor(that.audioCtx.currentTime),
-          current_process: that.format(that.audioCtx.currentTime),
-        });
+      audioCtx.src = this.data.audiourl;
+      audioCtx.onTimeUpdate(() => {
+        if (!this.data.is_moving_slider) {
+          this.setData({
+            slider_value: Math.floor(audioCtx.currentTime),
+            current_process: that.format(audioCtx.currentTime),
+            slider_max: Math.floor(audioCtx.duration),
+            total_process: that.format(audioCtx.duration)
+          });
+        }
+      })
+      audioCtx.onCanplay(this.updateTime)
+      audioCtx.play()
+      audioCtx.onEnded(() => {
+        // 单曲循环
+        that.setData({
+          slider_value: 0,
+          current_process: '00:00',
+          isplay: false,
+          total_process: that.format(audioCtx.duration)
+        })
+      })
       }
-    })
-    this.audioCtx.onCanplay(this.updateTime)
-    this.audioCtx.play()
   },
 
   updateTime: function() {
     let that = this;
     setTimeout(function(){
-      let duration = that.audioCtx.duration;
+      let duration = audioCtx.duration;
       if (duration == 0 || isNaN(duration)) {
         console.log(duration)
         that.updateTime();
       } else {
         that.setData({
-          slider_max: Math.floor(that.audioCtx.duration),
-          total_process: that.format(that.audioCtx.duration)
+          slider_max: Math.floor(audioCtx.duration),
+          total_process: that.format(audioCtx.duration)
         });
       }
     },100);
@@ -180,14 +194,7 @@ Page({
           console.log(typeof res.data)
           return false
         }
-        that.setData({
-          title: res.data.title,
-          author: res.data.author,
-          article: res.data.content,
-          dynasty: res.data.dynasty,
-          id: res.data.id,
-          audiourl: res.data.audiourl
-        }),
+        that.setCont(res);
         wx.hideNavigationBarLoading();
         wx.setNavigationBarTitle({
           title: '古诗文'
@@ -197,21 +204,18 @@ Page({
   },
   play: function (res) {
     if(this.data.isplay){
-      this.audioCtx.pause();
+      audioCtx.pause();
       this.setData({
         isplay: false,
-        playtext: "暂停",
       });
     }else{
-      this.audioCtx.play();
-      
-      this.audioCtx.onPlay(()=>{
-        console.log(this.audioCtx.duration)//0
+      audioCtx.play();
+      audioCtx.onPlay(()=>{
+        console.log(audioCtx.duration)//0
       })
 
       this.setData({
         isplay: true,
-        playtext: "播放",
       });
     }
   },
@@ -219,15 +223,7 @@ Page({
   // 拖动进度条，到指定位置
   hanle_slider_change(e) {
     const position = e.detail.value
-    this.audioCtx.seek(position)
-  },
-  // 拖动进度条控件
-  seekCurrentAudio(position) {
-    // 更新进度条
-    let that = this
-    console.log(that.audioCtx.currentTime)
-    
-
+    audioCtx.seek(position)
   },
    // 进度条滑动
    handle_slider_move_start() {
@@ -247,8 +243,23 @@ Page({
     return t
   },
   onUnload: function () {
-    this.audioCtx.destroy();
-  }
+    if(this.data.ishow){
+      audioCtx.pause();
+    }
+  },
+  onHide: function () {
+    if(this.data.ishow){
+      audioCtx.pause();
+    }
+  },
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+    if(this.data.ishow){
+      audioCtx.play();
+    }
+  },
 })
 
 
