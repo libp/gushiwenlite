@@ -6,29 +6,33 @@ Page({
     total:10,
     tableData: [],
     article: '',
-    title: '',
+    title: '暂无播放',
     dynasty: '',
     author: '',
     ishow: true,
     isplay: false,
     id: '',
+    checkid: 0,
     audiourl: '',
     is_moving_slider: false,
-    current_process:"",
-    slider_value: "",
-    total_process: "",
-    slider_max: "",
+    current_process:"00:00",
+    slider_value: "0",
+    total_process: "--:--",
+    slider_max: "100",
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad: function () {
     var that = this;
     this.getContentByPage(that)
   },
 
   getContentByPage: function (that){
+    wx.showLoading({
+      title: '加载中',
+    })
     wx.request({
       url: 'https://www.nichuiniu.cn/v1/gushiwen/selectByScores?pageNum=' + that.data.page + '&pageSize=' + that.data.pageSize,
       header: {
@@ -36,60 +40,86 @@ Page({
         'dataType': 'json'
       },
       success: function (res) {
-        console.log(res)
+        let tableData = res.data.list
+        for (let i of tableData) {
+          if (i.audiourl == null || i.audiourl === '') {
+            i.audiourl = false
+          } else {
+            i.audiourl = 'https://www.nichuiniu.cn/mp3/' + i.audiourl
+          }
+          i.playstatus = false
+        }
+        tableData = that.data.tableData.concat(tableData)
+        console.log(tableData)
         that.setData({
-          tableData: res.data.list,
+          tableData: tableData,
           total: res.data.total,
           page: that.data.page + 1
         })
+        wx.hideLoading()
       }
     })
   },
   preview: function(e){
-    wx.reLaunch({
-      url: '../index/index'+'?id='+e.currentTarget.dataset.field,
+    //relaunch 的问题在于其他页面都会被关闭
+    // wx.reLaunch({
+    //   url: '../index/index'+'?id='+e.currentTarget.dataset.field,
+    // })
+    //通过缓存数据在本地的方式解决
+    try {
+      wx.setStorageSync('articleID', e.currentTarget.dataset.field)
+    } catch (e) { }
+    wx.switchTab({
+      url: '../index/index'
     })
   },
-  play: function(e){
-    console.log('1111')
-    console.log(e)
-    this.getContentByID(res.id, that);
-  },
-  getContentByID: function (id,that){
-    wx.request({
-      url: 'https://www.nichuiniu.cn/v1/gushiwen/selectByPrimaryKey?id=' + id,
-      header: {
-        'content-type': 'application/json',
-        'dataType': 'json'
-      },
-      success: function (res) {
-        that.setCont(res)
+
+  updateTime: function() {
+    let that = this;
+    setTimeout(function(){
+      let duration = audioCtx.duration;
+      if (duration == 0 || isNaN(duration)) {
+        // console.log(duration)
+        that.updateTime();
+      } else {
+        that.setData({
+          slider_max: Math.floor(audioCtx.duration),
+          total_process: that.format(audioCtx.duration)
+        });
       }
-    })
+    },100);
   },
-  setCont: function(res) {
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
     var that = this;
-    this.setData({
-      title: res.data.title,
-      author: res.data.author,
-      article: res.data.content,
-      dynasty: res.data.dynasty,
-      id: res.data.id,
-      audiourl: res.data.audiourl
-    });
-    if (this.data.audiourl == null || this.data.audiourl === '') {
-      audioCtx.pause()
+    this.getContentByPage(that)
+  },
+
+  play: function (e) {
+    let that = this
+    let checkid = e.currentTarget.dataset.id
+    let title = e.currentTarget.dataset.title
+    if (this.data.checkid == checkid){
       this.setData({
-        ishow: false,
+        checkid: 0,
+      });
+    }else{
+      this.setData({
+        checkid: e.currentTarget.dataset.id,
+        title: title
+      });
+    }
+    
+    if(this.data.isplay && this.data.checkid != checkid){
+      audioCtx.pause();
+      this.setData({
         isplay: false,
       });
-    } else {
-      this.setData({
-        ishow: true,
-        isplay: true,
-        audiourl:  'https://www.nichuiniu.cn/mp3/' + res.data.audiourl
-      });
-      audioCtx.src = this.data.audiourl;
+    }else{
+      audioCtx.src = e.currentTarget.dataset.field;
       audioCtx.onTimeUpdate(() => {
         if (!this.data.is_moving_slider) {
           this.setData({
@@ -110,43 +140,6 @@ Page({
           isplay: false,
           total_process: that.format(audioCtx.duration)
         })
-      })
-      }
-  },
-
-  updateTime: function() {
-    let that = this;
-    setTimeout(function(){
-      let duration = audioCtx.duration;
-      if (duration == 0 || isNaN(duration)) {
-        console.log(duration)
-        that.updateTime();
-      } else {
-        that.setData({
-          slider_max: Math.floor(audioCtx.duration),
-          total_process: that.format(audioCtx.duration)
-        });
-      }
-    },100);
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  play: function (res) {
-    if(this.data.isplay){
-      audioCtx.pause();
-      this.setData({
-        isplay: false,
-      });
-    }else{
-      audioCtx.play();
-      audioCtx.onPlay(()=>{
-        console.log(audioCtx.duration)//0
       })
 
       this.setData({
@@ -177,12 +170,12 @@ Page({
     t = time + ':' + ((t % 60) / 100).toFixed(2).slice(-2)
     return t
   },
-  // onUnload: function () {
-  //   audioCtx.pause();
-  // },
-  // onHide: function () {
-  //   audioCtx.pause();
-  // },
+  onUnload: function () {
+    audioCtx.pause();
+  },
+  onHide: function () {
+    audioCtx.pause();
+  },
   // /**
   //  * 生命周期函数--监听页面显示
   //  */

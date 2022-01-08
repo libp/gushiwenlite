@@ -1,4 +1,25 @@
 /* pages/list/list.wxss */
+.isplay{
+  margin:0% 0% 15% 0%;
+  padding:0% 3% 0% 3%;
+  height:15%;
+  float: left;
+  width: 92vw;
+  position:fixed; 
+  top:0;
+  background-color: #fff;
+}
+.time{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height:1rem;
+  margin-top: 0.9rem;
+  font-size: 1rem;
+}
+.top_sticky{
+  margin-bottom: 30%;
+}
 .article_list{
   width: 92vw;
   height: 3rem;

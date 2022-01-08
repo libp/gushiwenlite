@@ -6,7 +6,7 @@ Page({
     title: '',
     dynasty: '',
     author: '',
-    ishow: true,
+    ishow: false,
     isplay: false,
     id: '',
     audiourl: '',
@@ -22,13 +22,15 @@ Page({
     if (!value) {
       that.showModal();
     };
-    // var articleID = wx.getStorageSync('articleID');
-    // if (articleID) {
-    //   that.getContentByID(articleID, that);
-    // };
+    var articleID = wx.getStorageSync('articleID');
+
     if(res.id){
+      //通过分享的链接直接进入具体的文章页
       that.getContentByID(res.id, that);
-    }else{
+    }else if (articleID) {
+      //通过本地缓存的链接ID直接进入具体的文章页
+      that.getContentByID(articleID, that);
+    } else {
       wx.showLoading({
         title: '加载中',
       })
@@ -52,6 +54,9 @@ Page({
     // 显示顶部刷新图标  
     wx.showNavigationBarLoading();
     var that = this;
+    wx.showLoading({
+      title: '加载中',
+    })
     wx.request({
       url: 'https://www.nichuiniu.cn/v1/gushiwen/selectByRandom', 
       method: "GET",
@@ -61,7 +66,7 @@ Page({
       },
       success: function (res) {
         if (typeof res.data === 'string'){
-          console.log(typeof res.data),
+          // console.log(typeof res.data),
           wx.stopPullDownRefresh();
           return false
         }
@@ -72,6 +77,7 @@ Page({
         });
         // 停止下拉动作  
         wx.stopPullDownRefresh();
+        wx.hideLoading()
       }
     })
     console.log(this.data)
@@ -87,13 +93,13 @@ Page({
       audiourl: res.data.audiourl
     });
     if (this.data.audiourl == null || this.data.audiourl === '') {
-      if(!this.data.ishow){
-        audioCtx.pause();
-      }
       this.setData({
         ishow: false,
         isplay: false,
       });
+      if(!this.data.ishow){
+        audioCtx.pause();
+      }
     } else {
       this.setData({
         ishow: true,
@@ -125,12 +131,13 @@ Page({
       }
   },
 
+  // 获取音频时长。
   updateTime: function() {
     let that = this;
     setTimeout(function(){
       let duration = audioCtx.duration;
       if (duration == 0 || isNaN(duration)) {
-        console.log(duration)
+        // console.log(duration)
         that.updateTime();
       } else {
         that.setData({
@@ -159,6 +166,9 @@ Page({
     })
   },
   getContentByID: function (id,that){
+    wx.showLoading({
+      title: '加载中',
+    })
     wx.request({
       url: 'https://www.nichuiniu.cn/v1/gushiwen/selectByPrimaryKey?id=' + id,
       header: {
@@ -167,6 +177,7 @@ Page({
       },
       success: function (res) {
         that.setCont(res)
+        wx.hideLoading()
       }
     })
   },
@@ -251,11 +262,23 @@ Page({
     if(this.data.ishow){
       audioCtx.pause();
     }
+    // 小程序初始化时清除缓存的页面ID
+    try {
+      wx.removeStorageSync('articleID')
+    } catch (e) {
+      // Do something when catch error
+    }
   },
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    var that = this
+    var articleID = wx.getStorageSync('articleID');
+    if (articleID) {
+      that.getContentByID(articleID, that);
+    };
+  
     if(this.data.ishow){
       audioCtx.play();
     }

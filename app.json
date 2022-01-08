@@ -22,7 +22,7 @@
       },
       {
         "pagePath": "pages/list/list",
-        "text": "目录",
+        "text": "精选",
         "iconPath": "/images/tab/tabbar_icon_shortcut_default.png",
         "selectedIconPath": "/images/tab/tabbar_icon_shortcut_active.png"
       },

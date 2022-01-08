@@ -1,5 +1,5 @@
 <view class="container">
-  <view class="isplay" hidden="{{true}}">
+  <view class="isplay">
     <view class='progressWrap'>
       <slider bindchange="hanle_slider_change" 
       bindtouchstart="handle_slider_move_start" 
@@ -9,19 +9,16 @@
       value="{{slider_value}}"
       />
     </view>
-      
     <view class='time'>
       <text>{{current_process}}</text>
+      <text>{{title}}</text>
       <text>{{total_process}}</text>
     </view>
-
-    <view class='play_img' bindtap="play">
-      <image  class="play_button_img" mode='scaleToFill'  src="{{ isplay ? '/images/pause.png' : '/images/play.png'}}"></image>
-    </view>
   </view>
-
-  <view class="article_list" wx:for="{{tableData}}" wx:key="id" bindtap="preview" data-field="{{item.id}}">
-    <view class="article_list_left">
+  <view class="top_sticky">
+  </view>
+  <view class="article_list" wx:for="{{tableData}}" wx:key="id" >
+    <view class="article_list_left" bindtap="preview" data-field="{{item.id}}">
       <view class="title">
         {{item.title}}
       </view>
@@ -29,8 +26,8 @@
         {{item.author}}·{{item.dynasty}}
       </view>
     </view>
-    <view class='article_list_right' bindtap="play"  data-field="{{item.id}}">
-      <image  class="play_button_img" mode='scaleToFill'  src="{{ isplay ? '/images/pause.png' : '/images/play.png'}}"></image>
+    <view class='article_list_right' bindtap="play"  data-title="{{item.title}}" data-id="{{item.id}}" data-field="{{item.audiourl}}" hidden="{{!item.audiourl}}">
+      <image  class="play_button_img" mode='scaleToFill'  src="{{ checkid == item.id ? '/images/pause.png' : '/images/play.png'}}"></image>
     </view>
   </view>
 </view>
