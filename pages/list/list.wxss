@@ -36,9 +36,14 @@
   width: 75vw;
 }
 .title{
+  width: 75vw;
   font-weight:bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .author{
+  width: 75vw;
   margin-top: 4px;
   font-size:12px;
   color:#ccc
