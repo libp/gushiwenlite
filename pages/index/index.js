@@ -30,6 +30,9 @@ Page({
     }else if (articleID) {
       //通过本地缓存的链接ID直接进入具体的文章页
       that.getContentByID(articleID, that);
+      wx.setNavigationBarTitle({
+        title: '古诗文'
+      });
     } else {
       wx.showLoading({
         title: '加载中',
@@ -178,6 +181,9 @@ Page({
       success: function (res) {
         that.setCont(res)
         wx.hideLoading()
+        wx.setNavigationBarTitle({
+          title: '古诗文'
+        });
       }
     })
   },

@@ -138,6 +138,7 @@ Page({
           slider_value: 0,
           current_process: '00:00',
           isplay: false,
+          checkid: 0,
           total_process: that.format(audioCtx.duration)
         })
       })
@@ -175,6 +176,9 @@ Page({
   },
   onHide: function () {
     audioCtx.pause();
+    this.setData({
+      checkid: 0,
+    });
   },
   // /**
   //  * 生命周期函数--监听页面显示
